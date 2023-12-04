@@ -66,6 +66,6 @@ export default WorkoutScreen;
 
 const styles = StyleSheet.create({
     safeArea: {
-        marginTop: StatusBar.currentHeight || 0,
+        paddingTop: StatusBar.currentHeight || 0,
     },
 });
