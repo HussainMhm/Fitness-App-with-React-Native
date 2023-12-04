@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
     SafeAreaView,
     StyleSheet,
@@ -10,9 +11,13 @@ import {
     ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { FitnessContext } from "../Context";
 
 const WorkoutScreen = ({ navigation, route }) => {
     const { id, image, exercises } = route.params;
+
+    const fitnessContext = useContext(FitnessContext);
+    const { completedWorkouts, setFitnessState } = fitnessContext;
 
     return (
         <SafeAreaView style={styles.safeArea} className="flex-1 bg-white">
@@ -35,16 +40,20 @@ const WorkoutScreen = ({ navigation, route }) => {
                     return (
                         <TouchableOpacity
                             key={index}
-                            className="flex-row m-4 p-2 space-x-6 border-r-4 border-gray-400"
+                            className="flex-row mx-4 my-4 px-2 space-x-6 border-r-4 border-gray-400 justify-center items-center"
                         >
                             <Image
                                 source={{ uri: exercise.image }}
                                 className="w-24 h-24 bg-slate-200"
                             />
-                            <View className="mt-4">
+                            <View className="mt-4 flex-1">
                                 <Text className="text-lg font-bold">{exercise.name}</Text>
                                 <Text className="text-lg text-gray-700">X{exercise.sets}</Text>
                             </View>
+
+                            {completedWorkouts.includes(exercise.name) && (
+                                <Ionicons name="checkmark-circle" size={32} color="green" />
+                            )}
                         </TouchableOpacity>
                     );
                 })}
@@ -53,7 +62,13 @@ const WorkoutScreen = ({ navigation, route }) => {
             <View className="bg-slate-50 p-4 justify-center items-center">
                 <TouchableOpacity
                     className="bg-orange-600 py-2 px-8 rounded-xl"
-                    onPress={() => navigation.navigate("Exercise", { exercises: exercises })}
+                    onPress={() => {
+                        navigation.navigate("Exercise", { exercises: exercises });
+                        setFitnessState((prevState) => ({
+                            ...prevState,
+                            completedWorkouts: [],
+                        }));
+                    }}
                 >
                     <Text className="text-white text-base font-bold">Start</Text>
                 </TouchableOpacity>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
     View,
     Text,
@@ -8,11 +8,16 @@ import {
     StatusBar,
     TouchableOpacity,
 } from "react-native";
+import { FitnessContext } from "../Context";
 
 const ExerciseScreen = ({ navigation, route }) => {
     const { exercises } = route.params;
     const [exerciseIndex, setExerciseIndex] = useState(0);
     const currentExercise = exercises[exerciseIndex];
+
+    const fitnessContext = useContext(FitnessContext);
+    const { completedWorkouts, workout, burnedCalories, workoutTime, setFitnessState } =
+        fitnessContext;
 
     return (
         <SafeAreaView style={styles.safeArea} className="flex-1 bg-white">
@@ -28,6 +33,14 @@ const ExerciseScreen = ({ navigation, route }) => {
                 className="bg-orange-600 mx-auto mt-8 px-20 py-2 rounded-2xl"
                 onPress={() => {
                     navigation.navigate("Rest");
+                    setFitnessState((prevState) => ({
+                        ...prevState,
+
+                        completedWorkouts: [...prevState.completedWorkouts, currentExercise.name],
+                        workout: prevState.workout + 1,
+                        workoutTime: prevState.workoutTime + 2.5,
+                        burnedCalories: prevState.burnedCalories + 6.3,
+                    }));
 
                     setTimeout(() => {
                         if (exerciseIndex === exercises.length - 1) {
